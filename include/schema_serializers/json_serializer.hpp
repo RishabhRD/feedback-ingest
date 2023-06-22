@@ -7,9 +7,9 @@
 #include <variant>
 
 namespace rd {
-namespace __detail {
 using json = nlohmann::json;
-inline auto serialize_metadata(rd::metadata_t metadata) {
+namespace __detail {
+inline auto serialize_metadata(rd::metadata_t const &metadata) {
   json j;
   j["id"] = metadata.id;
   j["source"] = metadata.source;
@@ -20,7 +20,8 @@ inline auto serialize_metadata(rd::metadata_t metadata) {
   return j;
 }
 
-inline auto serialize_conversation_entry(rd::conversation_entry_t entry) {
+inline auto
+serialize_conversation_entry(rd::conversation_entry_t const &entry) {
   json j;
   j["message"] = entry.message;
   if (entry.user.index() == 0)
@@ -30,7 +31,7 @@ inline auto serialize_conversation_entry(rd::conversation_entry_t entry) {
   return j;
 }
 
-inline auto serialize_converstion(rd::conversation conversation) {
+inline auto serialize_converstion(rd::conversation const &conversation) {
   json j;
   j["feedback_type"] = "conversation";
   for (auto const &conversation_entry : conversation) {
@@ -39,14 +40,14 @@ inline auto serialize_converstion(rd::conversation conversation) {
   return j;
 }
 
-inline auto serialize_review(rd::review review) {
+inline auto serialize_review(rd::review const &review) {
   json j;
   j["feedback_type"] = "review";
   j["data"] = review;
   return j;
 }
 
-inline auto serialize_feedback(rd::feedback_t feedback) {
+inline auto serialize_feedback(rd::feedback_t const &feedback) {
   return std::visit(
       rd::overloaded{
           BOOST_HOF_LIFT(serialize_converstion),
@@ -56,8 +57,7 @@ inline auto serialize_feedback(rd::feedback_t feedback) {
 }
 } // namespace __detail
 
-inline auto serialize_to_json(rd::schema_t schema) {
-  using json = nlohmann::json;
+inline auto serialize_to_json(rd::schema_t const &schema) {
   json j;
   j["metadata"] = __detail::serialize_metadata(schema.metadata);
   j["feedback"] = __detail::serialize_feedback(schema.feedback);
