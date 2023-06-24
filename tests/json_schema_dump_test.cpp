@@ -11,6 +11,9 @@ TEST_CASE("creates correct file name") {
       .app_version = tl::nullopt,
   };
   schema.feedback = rd::review{"A great app, must use!"};
-  REQUIRE_EQ(rd::create_json_file_name(".", schema),
-             "./File_playstore_enterpret.txt.json");
+  auto time_point = std::chrono::system_clock::now();
+  REQUIRE_EQ(rd::create_json_file_name(".", time_point, schema),
+             "./File_playstore_enterpret.txt_" +
+                 std::to_string(time_point.time_since_epoch().count()) +
+                 ".json");
 }
