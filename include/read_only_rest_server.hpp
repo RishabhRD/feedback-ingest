@@ -27,6 +27,7 @@ public:
   using normal_function_t =
       std::function<void(http::request<http::string_body>)>;
   using handler_t = handler_function_t<normal_function_t, awaitable_function_t>;
+
   read_only_rest_server(unsigned short port) : server(port) {}
 
   // Precondition: handler should not throw any exception
