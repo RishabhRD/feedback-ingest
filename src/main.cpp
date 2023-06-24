@@ -1,4 +1,5 @@
 #include "http_ops.hpp"
+#include "read_only_rest_server.hpp"
 #include <boost/asio.hpp>
 #include <iostream>
 
@@ -15,8 +16,19 @@ auto fetch_http() -> rd::awaitable<void> {
   }
 }
 
+using namespace boost::beast;
+
 int main() {
   boost::asio::io_context ctx;
-  boost::asio::co_spawn(ctx, fetch_http(), boost::asio::detached);
+  rd::read_only_rest_server server(4000);
+  server.register_route("/", [](http::request<http::string_body> req) {
+    std::cout << "handling /" << std::endl;
+    std::cout << req.body() << std::endl;
+  });
+  server.register_route("/home", [](http::request<http::string_body> req) {
+    std::cout << "handling /home" << std::endl;
+    std::cout << req.body() << std::endl;
+  });
+  boost::asio::co_spawn(ctx, server.start_server(), boost::asio::detached);
   ctx.run();
 }
