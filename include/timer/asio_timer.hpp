@@ -4,7 +4,6 @@
 #include "timer_concept.hpp"
 #include <boost/asio.hpp>
 #include <chrono>
-#include <iostream>
 
 namespace rd {
 

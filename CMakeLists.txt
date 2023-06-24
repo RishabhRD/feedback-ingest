@@ -6,6 +6,8 @@ include(cmake/CompilerWarnings.cmake)
 include(package.cmake)
 find_package(Boost REQUIRED)
 
+set(OPENSSL_USE_STATIC_LIBS TRUE)
+find_package(OpenSSL REQUIRED)
 
 add_library(project_options INTERFACE)
 target_compile_features(project_options INTERFACE cxx_std_20)

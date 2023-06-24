@@ -12,7 +12,7 @@ inline auto read_file(std::string file_path) -> rd::awaitable<std::string> {
   std::stringstream buffer;
   buffer << in.rdbuf();
 
-  return rd::just(buffer.str());
+  co_return buffer.str();
 }
 
 inline auto read_file_lines(std::string file_path)
@@ -24,7 +24,7 @@ inline auto read_file_lines(std::string file_path)
     res.push_back(line);
   }
 
-  return rd::just(std::move(res));
+  co_return res;
 }
 
 template <typename Content>
@@ -33,7 +33,7 @@ inline auto write_file(Content content, std::string file_path)
   std::ofstream of(file_path);
   of << content;
 
-  return rd::just();
+  co_return;
 }
 
 } // namespace rd

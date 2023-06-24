@@ -2,7 +2,6 @@
 #include "schema.hpp"
 #include "schema_serializers/json_serializer.hpp"
 #include <doctest/doctest.h>
-#include <iostream>
 #include <string>
 
 using json = nlohmann::json;

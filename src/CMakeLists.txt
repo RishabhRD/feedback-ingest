@@ -6,4 +6,7 @@ target_link_libraries(feedback_ingest PRIVATE
   project_warnings
   nlohmann_json::nlohmann_json
   boost::boost
+  OpenSSL::Crypto
+  ssl
+  crypto
 )

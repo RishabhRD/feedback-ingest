@@ -8,4 +8,7 @@ target_link_libraries(feedback_ingest_test PRIVATE
   doctest::doctest
   nlohmann_json::nlohmann_json
   boost::boost
+  OpenSSL::Crypto
+  ssl
+  crypto
 )
