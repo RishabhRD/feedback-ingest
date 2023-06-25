@@ -2,6 +2,8 @@
 doctest/2.4.11
 nlohmann_json/3.11.2
 boost/1.82.0 #ignore
+fmt/10.0.0
+range-v3/0.12.0
 
 [generators]
 CMakeDeps

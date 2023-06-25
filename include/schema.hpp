@@ -26,7 +26,7 @@ using feedback_t = std::variant<conversation, review>;
 struct metadata_t {
   tl::optional<std::string> location;
   tl::optional<std::string> app_version;
-  tl::optional<int> rating;
+  tl::optional<double> rating;
   tl::optional<int> impressions;
 };
 

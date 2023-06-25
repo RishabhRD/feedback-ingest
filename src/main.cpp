@@ -1,3 +1,4 @@
+#include "discourse_data_source.hpp"
 #include "http_ops.hpp"
 #include "read_only_rest_server.hpp"
 #include <boost/asio.hpp>
@@ -5,7 +6,9 @@
 
 auto fetch_http() -> rd::awaitable<void> {
   try {
-    auto res = co_await rd::http_get("http://127.0.0.1");
+    auto res = co_await rd::http_get( //"http://127.0.0.1");
+        "https://meta.discourse.org/t/111021/"
+        "posts.json?post_ids%5B%5D=874799");
     // "https://meta.discourse.org/"
     // "search.json?page=1&q=after%3A2021-01-01+before%3A2021-02-20");
 
@@ -20,15 +23,14 @@ using namespace boost::beast;
 
 int main() {
   boost::asio::io_context ctx;
-  rd::read_only_rest_server server(4000);
-  server.register_route("/", [](http::request<http::string_body> req) {
-    std::cout << "handling /" << std::endl;
-    std::cout << req.body() << std::endl;
-  });
-  server.register_route("/home", [](http::request<http::string_body> req) {
-    std::cout << "handling /home" << std::endl;
-    std::cout << req.body() << std::endl;
-  });
-  boost::asio::co_spawn(ctx, server.start_server(), boost::asio::detached);
+  using namespace std::chrono_literals;
+  std::string source_id = "sourcd_id";
+  std::string tenant_id = "tenant_id";
+  auto begin_date = std::chrono::sys_days{2021y / 1 / 1};
+  auto end_date = std::chrono::sys_days{2021y / 1 / 30};
+  int topic_id = 111021;
+  auto post = rd::discourse::fetch_posts_between(source_id, tenant_id, topic_id,
+                                                 begin_date, end_date);
+  boost::asio::co_spawn(ctx, std::move(post), boost::asio::detached);
   ctx.run();
 }
