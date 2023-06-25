@@ -1,4 +1,4 @@
-#include "data_source/discourse.hpp"
+#include "data_source/discourse/algorithms.hpp"
 #include <doctest/doctest.h>
 #include <iostream>
 #include <range/v3/algorithm/sort.hpp>

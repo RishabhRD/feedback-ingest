@@ -1,4 +1,4 @@
-#include "data_source/discourse.hpp"
+#include "data_source/discourse/data_source.hpp"
 #include "http_ops.hpp"
 #include "read_only_rest_server.hpp"
 #include <boost/asio.hpp>
