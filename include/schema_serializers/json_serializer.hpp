@@ -11,12 +11,14 @@ using json = nlohmann::json;
 namespace __detail {
 inline auto serialize_metadata(rd::metadata_t const &metadata) {
   json j;
-  j["id"] = metadata.id;
-  j["source"] = metadata.source;
-  if (metadata.country)
-    j["country"] = metadata.country.value();
+  if (metadata.location)
+    j["location"] = metadata.location.value();
   if (metadata.app_version)
     j["app_version"] = metadata.app_version.value();
+  if (metadata.rating)
+    j["rating"] = metadata.rating.value();
+  if (metadata.impressions)
+    j["impressions"] = metadata.impressions.value();
   return j;
 }
 
@@ -48,12 +50,16 @@ inline auto serialize_review(rd::review const &review) {
 }
 
 inline auto serialize_feedback(rd::feedback_t const &feedback) {
-  return std::visit(
+  json j;
+  j["source_id"] = feedback.source_id;
+  j["tenant_id"] = feedback.tenant_id;
+  j["feedback_data"] = std::visit(
       rd::overloaded{
           BOOST_HOF_LIFT(serialize_converstion),
           BOOST_HOF_LIFT(serialize_review),
       },
-      feedback);
+      feedback.feedback_data);
+  return j;
 }
 } // namespace __detail
 

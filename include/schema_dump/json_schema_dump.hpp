@@ -11,8 +11,9 @@ inline auto create_json_file_name(
     std::string base_path,
     std::chrono::time_point<std::chrono::system_clock> cur_time,
     rd::schema_t const &schema) {
-  return base_path + "/" + schema.metadata.source + "_" + schema.metadata.id +
-         +"_" + std::to_string(cur_time.time_since_epoch().count()) + ".json";
+  return base_path + "/" + schema.feedback.tenant_id + "/" +
+         schema.feedback.source_id + +"_" +
+         std::to_string(cur_time.time_since_epoch().count()) + ".json";
 }
 
 inline auto save_schema_to_json(rd::schema_t const &schema) {
