@@ -50,23 +50,27 @@ inline auto serialize_review(rd::review const &review) {
 }
 
 inline auto serialize_feedback(rd::feedback_t const &feedback) {
-  json j;
-  j["source_id"] = feedback.source_id;
-  j["tenant_id"] = feedback.tenant_id;
-  j["feedback_data"] = std::visit(
+  return std::visit(
       rd::overloaded{
           BOOST_HOF_LIFT(serialize_converstion),
           BOOST_HOF_LIFT(serialize_review),
       },
-      feedback.feedback_data);
+      feedback);
+}
+
+inline auto serialize_entry(rd::data_source_entry_t const &entry) {
+  json j;
+  j["metadata"] = serialize_metadata(entry.metadata);
+  j["feedback"] = serialize_feedback(entry.feedback);
   return j;
 }
 } // namespace __detail
 
 inline auto serialize_to_json(rd::schema_t const &schema) {
   json j;
-  j["metadata"] = __detail::serialize_metadata(schema.metadata);
-  j["feedback"] = __detail::serialize_feedback(schema.feedback);
+  j["source_id"] = schema.source_id;
+  j["tenant_id"] = schema.tenant_id;
+  j["entry"] = __detail::serialize_entry(schema.entry);
   return j;
 }
 } // namespace rd

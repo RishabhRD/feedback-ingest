@@ -7,12 +7,11 @@
 #include <fstream>
 
 namespace rd {
-inline auto create_json_file_name(
-    std::string base_path,
-    std::chrono::time_point<std::chrono::system_clock> cur_time,
-    rd::schema_t const &schema) {
-  return base_path + "/" + schema.feedback.tenant_id + "/" +
-         schema.feedback.source_id + +"_" +
+inline auto
+create_json_file_name(std::string base_path,
+                      std::chrono::system_clock::time_point cur_time,
+                      rd::schema_t const &schema) {
+  return base_path + "/" + schema.tenant_id + "/" + schema.source_id + +"_" +
          std::to_string(cur_time.time_since_epoch().count()) + ".json";
 }
 

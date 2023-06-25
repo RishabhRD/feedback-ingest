@@ -20,11 +20,7 @@ struct conversation_entry_t {
 using conversation = std::vector<conversation_entry_t>;
 using review = std::string;
 
-struct feedback_t {
-  std::string source_id;
-  std::string tenant_id;
-  std::variant<conversation, review> feedback_data;
-};
+using feedback_t = std::variant<conversation, review>;
 
 // NOTE: Can include more optional fields as per more data sources
 struct metadata_t {
@@ -34,8 +30,14 @@ struct metadata_t {
   tl::optional<int> impressions;
 };
 
-struct schema_t {
+struct data_source_entry_t {
   metadata_t metadata;
   feedback_t feedback;
+};
+
+struct schema_t {
+  std::string source_id;
+  std::string tenant_id;
+  data_source_entry_t entry;
 };
 } // namespace rd

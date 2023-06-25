@@ -7,42 +7,43 @@
 using json = nlohmann::json;
 
 TEST_CASE("Can serialize conversation") {
-  rd::schema_t schema;
-  schema.metadata = {
+  rd::data_source_entry_t entry;
+  entry.metadata = {
       .location = "India",
       .app_version = "4.1.2",
       .rating = 5,
       .impressions = 20000,
   };
-  schema.feedback = {
+  entry.feedback = rd::conversation{
+      {rd::user_1{}, "Hello"},
+      {rd::user_1{}, "Can you Help me"},
+      {rd::user_2{}, "Yes How can I help you?"},
+  };
+
+  rd::schema_t schema{
       .source_id = "some_special_source_id",
       .tenant_id = "some_special_tenant_id",
-      .feedback_data =
-          rd::conversation{
-              {rd::user_1{}, "Hello"},
-              {rd::user_1{}, "Can you Help me"},
-              {rd::user_2{}, "Yes How can I help you?"},
-          },
+      .entry = entry,
   };
 
   json expected = {
-      {"metadata",
-       json{
-           {"location", "India"},
-           {"app_version", "4.1.2"},
-           {"rating", 5},
-           {"impressions", 20000},
-       }},
-      {"feedback",
-       {{"source_id", "some_special_source_id"},
-        {"tenant_id", "some_special_tenant_id"},
-        {"feedback_data",
+      {"source_id", "some_special_source_id"},
+      {"tenant_id", "some_special_tenant_id"},
+      {"entry",
+       {{"metadata",
+         {
+             {"location", "India"},
+             {"app_version", "4.1.2"},
+             {"rating", 5},
+             {"impressions", 20000},
+         }},
+        {"feedback",
          {{"feedback_type", "conversation"},
           {"data",
-           json{
-               json{{"user", "user1"}, {"message", "Hello"}},
-               json{{"user", "user1"}, {"message", "Can you Help me"}},
-               json{{"user", "user2"}, {"message", "Yes How can I help you?"}},
+           {
+               {{"user", "user1"}, {"message", "Hello"}},
+               {{"user", "user1"}, {"message", "Can you Help me"}},
+               {{"user", "user2"}, {"message", "Yes How can I help you?"}},
            }}}}}},
   };
 
@@ -50,64 +51,72 @@ TEST_CASE("Can serialize conversation") {
 }
 
 TEST_CASE("Can serialize review") {
-  rd::schema_t schema;
-  schema.metadata = {
+  rd::data_source_entry_t entry;
+  entry.metadata = {
       .location = "India",
       .app_version = "4.1.2",
       .rating = 5,
       .impressions = 20000,
   };
-  schema.feedback = {
+  entry.feedback = "A great app, must try!";
+
+  rd::schema_t schema{
       .source_id = "some_special_source_id",
       .tenant_id = "some_special_tenant_id",
-      .feedback_data = rd::review{"A good product, must use!"},
+      .entry = entry,
   };
 
   json expected = {
-      {"metadata",
-       json{
-           {"location", "India"},
-           {"app_version", "4.1.2"},
-           {"rating", 5},
-           {"impressions", 20000},
-       }},
-      {"feedback",
-       {{"source_id", "some_special_source_id"},
-        {"tenant_id", "some_special_tenant_id"},
-        {"feedback_data",
-         {{"feedback_type", "review"},
-          {"data", "A good product, must use!"}}}}},
+      {"source_id", "some_special_source_id"},
+      {"tenant_id", "some_special_tenant_id"},
+      {"entry",
+       {{"metadata",
+         {
+             {"location", "India"},
+             {"app_version", "4.1.2"},
+             {"rating", 5},
+             {"impressions", 20000},
+         }},
+        {"feedback",
+         {
+             {"feedback_type", "review"},
+             {"data", "A great app, must try!"},
+         }}}},
   };
 
   REQUIRE_EQ(rd::serialize_to_json(schema), expected);
 }
 
 TEST_CASE("Is skipping null field") {
-  rd::schema_t schema;
-  schema.metadata = {
+  rd::data_source_entry_t entry;
+  entry.metadata = {
       .location = tl::nullopt,
       .app_version = "4.1.2",
       .rating = 5,
       .impressions = tl::nullopt,
   };
-  schema.feedback = {
+  entry.feedback = "A great app, must try!";
+
+  rd::schema_t schema{
       .source_id = "some_special_source_id",
       .tenant_id = "some_special_tenant_id",
-      .feedback_data = rd::review{"A good product, must use!"},
+      .entry = entry,
   };
 
   json expected = {
-      {"metadata",
-       json{
-           {"app_version", "4.1.2"},
-           {"rating", 5},
-       }},
-      {"feedback",
-       {{"source_id", "some_special_source_id"},
-        {"tenant_id", "some_special_tenant_id"},
-        {"feedback_data",
-         {{"feedback_type", "review"},
-          {"data", "A good product, must use!"}}}}},
+      {"source_id", "some_special_source_id"},
+      {"tenant_id", "some_special_tenant_id"},
+      {"entry",
+       {{"metadata",
+         {
+             {"app_version", "4.1.2"},
+             {"rating", 5},
+         }},
+        {"feedback",
+         {
+             {"feedback_type", "review"},
+             {"data", "A great app, must try!"},
+         }}}},
   };
 
   REQUIRE_EQ(rd::serialize_to_json(schema), expected);
