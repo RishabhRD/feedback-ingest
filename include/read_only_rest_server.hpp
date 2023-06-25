@@ -37,7 +37,11 @@ public:
                   [c_f = std::move(f)](
                       http::request<http::string_body> &req,
                       tcp::socket &socket) mutable -> rd::awaitable<void> {
-                    co_await __detail::reply_200_ok(req, socket);
+                    try {
+                      co_await __detail::reply_200_ok(req, socket);
+                    } catch (std::exception &e) {
+                      std::cout << "Got an error : " << e.what() << std::endl;
+                    }
                     co_await invoke_handler_function(c_f, req);
                   }});
   }
