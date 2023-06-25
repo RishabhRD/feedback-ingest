@@ -1,4 +1,4 @@
-#include "discourse_data_source.hpp"
+#include "data_source/discourse.hpp"
 #include "http_ops.hpp"
 #include "read_only_rest_server.hpp"
 #include <boost/asio.hpp>
@@ -24,8 +24,8 @@ using namespace boost::beast;
 int main() {
   boost::asio::io_context ctx;
   using namespace std::chrono_literals;
-  std::string source_id = "sourcd_id";
-  std::string tenant_id = "tenant_id";
+  auto source_id = 123;
+  auto tenant_id = 321;
   auto begin_date = std::chrono::sys_days{2021y / 1 / 1};
   auto end_date = std::chrono::sys_days{2021y / 1 / 30};
   int topic_id = 111021;

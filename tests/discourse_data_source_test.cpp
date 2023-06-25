@@ -1,4 +1,4 @@
-#include "discourse_data_source.hpp"
+#include "data_source/discourse.hpp"
 #include <doctest/doctest.h>
 #include <iostream>
 #include <range/v3/algorithm/sort.hpp>
@@ -251,12 +251,11 @@ TEST_CASE("Can convert post stream to schema") {
 
   std::string review = "this is a sample review";
 
-  auto res =
-      rd::discourse::raw_posts_to_schema(posts, "source_id", "tenant_id");
+  auto res = rd::discourse::raw_posts_to_schema(posts, 123, 321);
 
   REQUIRE_EQ(res.size(), 1);
-  REQUIRE_EQ(res[0].source_id, "source_id");
-  REQUIRE_EQ(res[0].tenant_id, "tenant_id");
+  REQUIRE_EQ(res[0].source_id, 123);
+  REQUIRE_EQ(res[0].tenant_id, 321);
   REQUIRE_EQ(res[0].entry.metadata.app_version, tl::nullopt);
   REQUIRE_EQ(res[0].entry.metadata.location, tl::nullopt);
   REQUIRE_EQ(res[0].entry.metadata.rating, 35.8);
