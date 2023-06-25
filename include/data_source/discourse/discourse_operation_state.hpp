@@ -28,7 +28,15 @@ template <typename Timer> struct discourse_operation_state_t {
   using tenant_id_t = rd::tenant_registry_t::key_t;
   using source_id_t = rd::data_source_info_registry_t::key_t;
 
+  discourse_operation_state_t(source_id_t source_id, tenant_id_t tenant_id,
+                              discourse_info_t discourse_info,
+                              Timer schedule_every)
+      : source_id(source_id), tenant_id(tenant_id),
+        discourse_info(discourse_info),
+        schedule_every(std::move(schedule_every)) {}
+
   discourse_operation_state_t(discourse_operation_state_t const &) = delete;
+  discourse_operation_state_t(discourse_operation_state_t &&) = default;
 
   rd::awaitable<void> start() {
     auto extract_transform_load = [&](auto prev_time) -> rd::awaitable<void> {
@@ -44,11 +52,16 @@ template <typename Timer> struct discourse_operation_state_t {
   }
 
 private:
-  tenant_id_t tenant_id;
   source_id_t source_id;
+  tenant_id_t tenant_id;
   discourse_info_t discourse_info;
   Timer schedule_every;
 };
+template <typename Timer>
+discourse_operation_state_t(
+    typename discourse_operation_state_t<Timer>::source_id_t,
+    typename discourse_operation_state_t<Timer>::tenant_id_t, discourse_info_t,
+    Timer) -> discourse_operation_state_t<Timer>;
 
 } // namespace discourse
 } // namespace rd
