@@ -73,4 +73,13 @@ inline auto serialize_to_json(rd::schema_t const &schema) {
   j["entry"] = __detail::serialize_entry(schema.entry);
   return j;
 }
+
+inline auto serialize_to_json(std::vector<rd::schema_t> const &schemas) {
+  json j;
+  for (auto const &schema : schemas) {
+    j.push_back(serialize_to_json(schema));
+  }
+  return j;
+}
+
 } // namespace rd
