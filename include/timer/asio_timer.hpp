@@ -12,7 +12,7 @@ using namespace boost::asio;
 using namespace std::chrono;
 
 struct execute_every_t {
-  using clock_t = std::chrono::steady_clock;
+  using clock_t = std::chrono::system_clock;
   using timepoint_t = std::chrono::time_point<clock_t>;
 
   auto operator()(rd::is_duration auto duration, auto callback) const {
@@ -37,7 +37,7 @@ struct execute_every_t {
 private:
   auto execute(timepoint_t start_time, rd::is_duration auto duration,
                auto callback, std::string __dedup_id) const -> awaitable<void> {
-    steady_timer timer(co_await this_coro::executor);
+    system_timer timer(co_await this_coro::executor);
     for (;;) {
       timer.expires_after(duration);
       co_await timer.async_wait(use_awaitable);
