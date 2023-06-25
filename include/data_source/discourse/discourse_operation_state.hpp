@@ -38,8 +38,9 @@ template <typename Timer> struct discourse_operation_state_t {
       co_await rd::on_new_schema_creation(schemas);
     };
     static_assert(rd::is_awaitable<decltype(extract_transform_load)>);
-    co_await schedule_every(std::chrono::sys_days{2023y / 1 / 1}, 1d,
-                            extract_transform_load);
+    co_await schedule_every(
+        std::chrono::sys_days{2023y / 1 / 1}, 1d, extract_transform_load,
+        std::to_string(tenant_id) + "_" + std::to_string(source_id));
   }
 
 private:
