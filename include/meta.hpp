@@ -1,3 +1,5 @@
+#pragma once
+
 namespace rd {
 template <typename... List> struct typelist {};
 
