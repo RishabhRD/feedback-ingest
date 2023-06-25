@@ -36,8 +36,8 @@ struct data_source_entry_t {
 };
 
 struct schema_t {
-  std::string source_id;
-  std::string tenant_id;
+  int source_id;
+  int tenant_id;
   data_source_entry_t entry;
 };
 } // namespace rd

@@ -17,13 +17,13 @@ TEST_CASE("creates correct file name") {
   };
 
   rd::schema_t schema{
-      .source_id = "source_id",
-      .tenant_id = "tenant_id",
+      .source_id = 123,
+      .tenant_id = 321,
       .entry = entry,
   };
   auto time_point = std::chrono::system_clock::now();
   REQUIRE_EQ(rd::create_json_file_name(".", time_point, schema),
-             "./tenant_id/source_id_" +
+             "./321/123_" +
                  std::to_string(time_point.time_since_epoch().count()) +
                  ".json");
 }

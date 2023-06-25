@@ -21,14 +21,14 @@ TEST_CASE("Can serialize conversation") {
   };
 
   rd::schema_t schema{
-      .source_id = "some_special_source_id",
-      .tenant_id = "some_special_tenant_id",
+      .source_id = 123,
+      .tenant_id = 321,
       .entry = entry,
   };
 
   json expected = {
-      {"source_id", "some_special_source_id"},
-      {"tenant_id", "some_special_tenant_id"},
+      {"source_id", 123},
+      {"tenant_id", 321},
       {"entry",
        {{"metadata",
          {
@@ -61,14 +61,14 @@ TEST_CASE("Can serialize review") {
   entry.feedback = "A great app, must try!";
 
   rd::schema_t schema{
-      .source_id = "some_special_source_id",
-      .tenant_id = "some_special_tenant_id",
+      .source_id = 123,
+      .tenant_id = 321,
       .entry = entry,
   };
 
   json expected = {
-      {"source_id", "some_special_source_id"},
-      {"tenant_id", "some_special_tenant_id"},
+      {"source_id", 123},
+      {"tenant_id", 321},
       {"entry",
        {{"metadata",
          {
@@ -98,14 +98,14 @@ TEST_CASE("Is skipping null field") {
   entry.feedback = "A great app, must try!";
 
   rd::schema_t schema{
-      .source_id = "some_special_source_id",
-      .tenant_id = "some_special_tenant_id",
+      .source_id = 123,
+      .tenant_id = 321,
       .entry = entry,
   };
 
   json expected = {
-      {"source_id", "some_special_source_id"},
-      {"tenant_id", "some_special_tenant_id"},
+      {"source_id", 123},
+      {"tenant_id", 321},
       {"entry",
        {{"metadata",
          {
