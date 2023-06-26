@@ -11,13 +11,12 @@ template <typename ValueType> struct in_memory_registry {
   auto register_value(value_t value) -> key_t {
     key_t key;
     if (unused.size()) {
-      registry.insert(std::pair{unused.back(), std::move(value)});
       key = unused.back();
       unused.pop_back();
     } else {
-      key = cur_key;
-      registry.insert(std::pair{cur_key++, std::move(value)});
+      key = cur_key++;
     }
+    registry.emplace(key, std::move(value));
     return key;
   }
 
