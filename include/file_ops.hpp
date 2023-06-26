@@ -27,6 +27,16 @@ inline auto read_file_lines(std::string file_path)
   co_return res;
 }
 
+inline auto sync_read_file_lines(std::string file_path) {
+  std::vector<std::string> res;
+  std::ifstream in(file_path);
+  std::string line;
+  while (std::getline(in, line)) {
+    res.push_back(line);
+  }
+  return res;
+}
+
 template <typename Content>
 inline auto write_file(Content content, std::string file_path)
     -> rd::awaitable<void> {

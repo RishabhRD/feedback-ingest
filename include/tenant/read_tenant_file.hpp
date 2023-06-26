@@ -29,11 +29,10 @@ std::unordered_map<int, int> inline register_all_tenants(
   return mp;
 }
 
-rd::awaitable<std::unordered_map<int, int>> inline load_tenant_file(
+std::unordered_map<int, int> inline load_tenant_file(
     std::string file_path, rd::application_state_t &state) {
-  auto lines = co_await rd::read_file_lines(file_path);
-
-  co_return register_all_tenants(state, lines);
+  auto lines = rd::sync_read_file_lines(file_path);
+  return register_all_tenants(state, lines);
 }
 
 } // namespace rd
