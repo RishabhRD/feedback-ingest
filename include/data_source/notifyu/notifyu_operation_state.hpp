@@ -25,8 +25,8 @@ template <typename RestServer> struct notifyu_operation_state_t {
 
   auto start() -> rd::awaitable<void> {
     try {
-      auto op = [self = this](auto const &req, auto &socket) {
-        return self->extract_transform_and_load(std::move(req), socket);
+      auto op = [this](auto const &req, auto &socket) {
+        return extract_transform_and_load(std::move(req), socket);
       };
       server.get().register_route(notifyu_info.listening_route, op);
       co_return;
