@@ -2,7 +2,7 @@
 
 #include "data_source/data_source_operation_state.hpp"
 #include "registry/in_memory_registry.hpp"
-#include <boost/asio/asio.hpp>
+#include <boost/asio.hpp>
 
 namespace rd {
 
