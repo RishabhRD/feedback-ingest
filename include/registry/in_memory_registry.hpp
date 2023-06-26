@@ -9,14 +9,14 @@ template <typename ValueType> struct in_memory_registry {
   using value_t = ValueType;
 
   auto register_value(value_t value) -> key_t {
-    int key;
+    key_t key;
     if (unused.size()) {
-      registry[unused.back()] = std::move(value);
+      registry.insert(std::pair{unused.back(), std::move(value)});
       key = unused.back();
       unused.pop_back();
     } else {
       key = cur_key;
-      registry[cur_key++] = std::move(value);
+      registry.insert(std::pair{cur_key++, std::move(value)});
     }
     return key;
   }
@@ -26,7 +26,7 @@ template <typename ValueType> struct in_memory_registry {
 
   auto has(key_t key) -> bool { return registry.contains(key); }
 
-  auto erase(key_t key) -> bool {
+  auto remove(key_t key) -> bool {
     if (registry.find(key) == registry.end())
       return false;
 

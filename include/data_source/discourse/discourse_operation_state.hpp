@@ -28,12 +28,12 @@ template <typename Timer> struct discourse_operation_state_t {
   using tenant_id_t = rd::tenant_registry_t::key_t;
   using source_id_t = rd::data_source_info_registry_t::key_t;
 
-  discourse_operation_state_t(source_id_t source_id, tenant_id_t tenant_id,
-                              discourse_info_t discourse_info,
-                              Timer schedule_every)
-      : source_id(source_id), tenant_id(tenant_id),
-        discourse_info(discourse_info),
-        schedule_every(std::move(schedule_every)) {}
+  discourse_operation_state_t(source_id_t source_id_, tenant_id_t tenant_id_,
+                              discourse_info_t discourse_info_,
+                              Timer schedule_every_)
+      : source_id(source_id_), tenant_id(tenant_id_),
+        discourse_info(discourse_info_),
+        schedule_every(std::move(schedule_every_)) {}
 
   discourse_operation_state_t(discourse_operation_state_t const &) = delete;
   discourse_operation_state_t(discourse_operation_state_t &&) = default;
@@ -45,10 +45,10 @@ template <typename Timer> struct discourse_operation_state_t {
           std::chrono::system_clock::now());
       co_await rd::on_new_schema_creation(schemas);
     };
-    static_assert(rd::is_awaitable<decltype(extract_transform_load)>);
-    co_await schedule_every(
-        std::chrono::sys_days{2023y / 1 / 1}, 1d, extract_transform_load,
-        std::to_string(tenant_id) + "_" + std::to_string(source_id));
+    co_await schedule_every(std::chrono::sys_days{2023y / 1 / 1},
+                            std::chrono::days(1), extract_transform_load,
+                            std::to_string(tenant_id) + "_" +
+                                std::to_string(source_id));
   }
 
 private:

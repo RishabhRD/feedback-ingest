@@ -17,7 +17,7 @@ TEST_CASE("Should not contain value after erasing it") {
   auto key_1 = registry.register_value(1);
   registry.register_value(2);
 
-  registry.erase(key_1);
+  registry.remove(key_1);
   REQUIRE_EQ(registry.has(key_1), false);
 }
 
@@ -33,9 +33,9 @@ TEST_CASE("Should throw exception when try to access non-existing key") {
   REQUIRE_THROWS(registry.get(1));
 }
 
-TEST_CASE("Should throw exception when try erased key (not added)") {
+TEST_CASE("Should throw exception when try removed key (not added)") {
   rd::in_memory_registry<int> registry;
   auto key_1 = registry.register_value(1);
-  registry.erase(key_1);
+  registry.remove(key_1);
   REQUIRE_THROWS(registry.get(key_1));
 }

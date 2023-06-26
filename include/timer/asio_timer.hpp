@@ -38,13 +38,13 @@ struct execute_every_t {
 private:
   template <typename Callback>
   auto execute(timepoint_t start_time, rd::is_duration auto duration,
-               Callback &&callback, std::string __dedup_id) const
-      -> awaitable<void> {
+               Callback &&callback, std::string) const -> awaitable<void> {
     system_timer timer(co_await this_coro::executor);
     for (;;) {
       timer.expires_after(duration);
       co_await timer.async_wait(use_awaitable);
-      if constexpr (rd::is_awaitable<std::remove_cvref_t<Callback>>) {
+      if constexpr (rd::is_awaitable<
+                        std::invoke_result_t<Callback, timepoint_t>>) {
         co_await callback(start_time);
       } else {
         callback(start_time);

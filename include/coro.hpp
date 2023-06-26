@@ -18,7 +18,10 @@ boost::asio::awaitable<void> sleep(Duration duration,
 
 template <typename T>
 concept is_awaitable = requires(T) {
-  T::value_type;
+  typename T::value_type;
   std::same_as<T, rd::awaitable<typename T::value_type>>;
 };
+static_assert(rd::is_awaitable<rd::awaitable<void>>);
+static_assert(rd::is_awaitable<rd::awaitable<int>>);
+
 } // namespace rd

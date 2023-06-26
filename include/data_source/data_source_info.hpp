@@ -26,12 +26,4 @@ static_assert(
 
 using data_source_info_t =
     __details::data_source_list_t<discourse::discourse_info_t>;
-
-constexpr auto get_name(data_source_info_t const &info_) {
-  return std::visit([](auto &&info) { return info.name; }, info_);
-}
-
-constexpr auto get_source_info(data_source_info_t const &info_) {
-  return std::visit([](auto &&info) { return info.source_info; }, info_);
-};
 } // namespace rd
