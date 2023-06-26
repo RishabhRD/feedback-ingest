@@ -12,4 +12,5 @@ target_link_libraries(feedback_ingest PRIVATE
   fmt::fmt
   range-v3::range-v3-meta
   range-v3::range-v3-concepts
+  spdlog::spdlog
 )

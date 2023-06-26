@@ -9,7 +9,7 @@
 #include "utils.hpp"
 #include <chrono>
 #include <functional>
-#include <iostream>
+#include <spdlog/spdlog.h>
 
 namespace rd {
 namespace filepp {
@@ -31,14 +31,15 @@ template <typename Timer> struct filepp_operation_state_t {
                               std::to_string(tenant_id) + "_" +
                                   std::to_string(source_id));
     } catch (std::exception &e) {
-      std::cout << "filepp source crashed \nsource_id: " << source_id
-                << "\ntenant_id: " << tenant_id << '\n'
-                << e.what() << std::endl;
+      spdlog::error("filepp source crashed \nsource_id: {}\ntenant_id: {}\n{}",
+                    source_id, tenant_id, e.what());
     }
   }
 
 private:
   auto extract_transform_and_load() -> rd::awaitable<void> {
+    spdlog::info("filepp: Processing data for source_id: {}, tenant_id: {}",
+                 source_id, tenant_id);
     auto const lines = co_await rd::read_file(filepp_info.file_path);
     auto const schema = rd::filepp::to_schema(source_id, tenant_id, lines);
     co_await rd::on_new_schema_creation(schema);

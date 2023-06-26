@@ -10,6 +10,7 @@
 #include <boost/beast/http.hpp>
 #include <functional>
 #include <iostream>
+#include <spdlog/spdlog.h>
 
 namespace rd {
 namespace notifyu {
@@ -31,9 +32,8 @@ template <typename RestServer> struct notifyu_operation_state_t {
       server.get().register_route(notifyu_info.listening_route, op);
       co_return;
     } catch (std::exception &e) {
-      std::cout << "notifyu source crashed \nsource_id: " << source_id
-                << "\ntenant_id: " << tenant_id << '\n'
-                << e.what() << std::endl;
+      spdlog::error("notifyu source crashed \nsource_id: {}\ntenant_id: {}\n{}",
+                    source_id, tenant_id, e.what());
     }
   }
 
@@ -42,6 +42,8 @@ private:
       boost::beast::http::request<boost::beast::http::string_body> const &req,
       boost::asio::ip::tcp::socket &socket) -> rd::awaitable<void> {
     try {
+      spdlog::info("NotifyU: Processing data for source_id: {}, tenant_id: {}",
+                   source_id, tenant_id);
       std::string body_data(req.body().data(),
                             req.body().data() + req.body().size());
       auto const parsed =
@@ -53,9 +55,9 @@ private:
       co_await on_new_schema_creation(parsed.second);
       co_await send_ok_response(socket);
     } catch (std::exception &e) {
-      std::cout << "notifyu request handler failed\nsource_id: " << source_id
-                << "\ntenant_id: " << tenant_id << '\n'
-                << e.what() << std::endl;
+      spdlog::error(
+          "notifyu request handler failed \nsource_id: {}\ntenant_id: {}\n{}",
+          source_id, tenant_id, e.what());
       co_return;
     }
   }

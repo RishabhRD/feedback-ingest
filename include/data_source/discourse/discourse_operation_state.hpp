@@ -10,6 +10,7 @@
 #include "schema.hpp"
 #include "tenant/tenant_registry.hpp"
 #include <iostream>
+#include <spdlog/spdlog.h>
 
 namespace rd {
 namespace discourse {
@@ -41,6 +42,9 @@ template <typename Timer> struct discourse_operation_state_t {
   rd::awaitable<void> start() {
     try {
       auto extract_transform_load = [&](auto prev_time) -> rd::awaitable<void> {
+        spdlog::info(
+            "Discourse: Processing data for source_id: {}, tenant_id: {}",
+            source_id, tenant_id);
         auto schemas = co_await fetch_posts_between(
             source_id, tenant_id, discourse_info.topic_id, prev_time,
             std::chrono::system_clock::now());
@@ -51,10 +55,9 @@ template <typename Timer> struct discourse_operation_state_t {
                               std::to_string(tenant_id) + "_" +
                                   std::to_string(source_id));
     } catch (std::exception &e) {
-      std::cout << e.what() << std::endl;
-      std::cout << "discourse source crashed \nsource_id: " << source_id
-                << "\ntenant_id: " << tenant_id << '\n'
-                << e.what() << std::endl;
+      spdlog::error(
+          "discourse source crashed \nsource_id: {}\ntenant_id: {}\n{}",
+          source_id, tenant_id, e.what());
     }
   }
 
