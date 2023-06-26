@@ -8,6 +8,7 @@
 #include "new_schema_handler.hpp"
 #include "schema.hpp"
 #include "tenant/tenant_registry.hpp"
+#include <iostream>
 
 namespace rd {
 namespace discourse {
@@ -39,16 +40,20 @@ template <typename Timer> struct discourse_operation_state_t {
   discourse_operation_state_t(discourse_operation_state_t &&) = default;
 
   rd::awaitable<void> start() {
-    auto extract_transform_load = [&](auto prev_time) -> rd::awaitable<void> {
-      auto schemas = co_await fetch_posts_between(
-          source_id, tenant_id, discourse_info.topic_id, prev_time,
-          std::chrono::system_clock::now());
-      co_await rd::on_new_schema_creation(schemas);
-    };
-    co_await schedule_every(std::chrono::sys_days{2023y / 1 / 1},
-                            std::chrono::days(1), extract_transform_load,
-                            std::to_string(tenant_id) + "_" +
-                                std::to_string(source_id));
+    try {
+      auto extract_transform_load = [&](auto prev_time) -> rd::awaitable<void> {
+        auto schemas = co_await fetch_posts_between(
+            source_id, tenant_id, discourse_info.topic_id, prev_time,
+            std::chrono::system_clock::now());
+        co_await rd::on_new_schema_creation(schemas);
+      };
+      co_await schedule_every(std::chrono::sys_days{2023y / 1 / 1},
+                              std::chrono::days(1), extract_transform_load,
+                              std::to_string(tenant_id) + "_" +
+                                  std::to_string(source_id));
+    } catch (std::exception &e) {
+      std::cout << e.what() << std::endl;
+    }
   }
 
 private:

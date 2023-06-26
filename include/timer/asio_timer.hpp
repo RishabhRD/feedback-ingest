@@ -40,16 +40,23 @@ private:
   auto execute(timepoint_t start_time, rd::is_duration auto duration,
                Callback &&callback, std::string) const -> awaitable<void> {
     system_timer timer(co_await this_coro::executor);
+    co_await call_callback(callback, start_time);
     for (;;) {
+      start_time = clock_t::now();
       timer.expires_after(duration);
       co_await timer.async_wait(use_awaitable);
-      if constexpr (rd::is_awaitable<
-                        std::invoke_result_t<Callback, timepoint_t>>) {
-        co_await callback(start_time);
-      } else {
-        callback(start_time);
-      }
-      start_time = clock_t::now();
+      co_await call_callback(callback, start_time);
+    }
+  }
+
+  template <typename Callback>
+  auto call_callback(Callback &&callback, timepoint_t time) const
+      -> awaitable<void> {
+    if constexpr (rd::is_awaitable<
+                      std::invoke_result_t<Callback, timepoint_t>>) {
+      co_await callback(time);
+    } else {
+      callback(time);
     }
   }
 };

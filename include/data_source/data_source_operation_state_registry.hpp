@@ -16,6 +16,7 @@ public:
 
   // TODO: Make tasks cancellable from outside, and automatically remove when
   // done
+  // Precondition: start task should not throw any exception
   auto register_value(value_t value) -> key_t {
     auto res = registry.register_value(std::move(value));
     boost::asio::co_spawn(ctx, rd::start(registry.get(res)),
