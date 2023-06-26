@@ -1,3 +1,8 @@
+#include "application_state.hpp"
+#include "data_source/data_source_info_header.hpp"
+#include "data_source/discourse/discourse_info.hpp"
+#include "data_source/discourse/load_into_application.hpp"
+#include "tenant/tenant_info.hpp"
 #include <iostream>
 
 // auto fetch_http() -> rd::awaitable<void> {
@@ -17,4 +22,38 @@
 //
 // using namespace boost::beast;
 
-int main() {}
+int main() {
+  rd::application_state_t state;
+  rd::tenant_info_t t1{
+      .owner_email = "enterpret@enterpret.com",
+      .organisation = "enterpret",
+  };
+  rd::tenant_info_t t2{
+      .owner_email = "rishabhdwivedi17@gmail.com",
+      .organisation = "local",
+  };
+
+  auto t1_id = state.tenant_registry.register_value(t1);
+  auto t2_id = state.tenant_registry.register_value(t2);
+
+  rd::data_source_info_header_t<rd::discourse::discourse_info_t> s1{
+      .name = "Discourse",
+      .source_info =
+          rd::discourse::discourse_info_t{
+              .topic_id = 111143,
+          },
+  };
+
+  rd::data_source_info_header_t<rd::discourse::discourse_info_t> s2{
+      .name = "Discourse",
+      .source_info =
+          rd::discourse::discourse_info_t{
+              .topic_id = 31963,
+          },
+  };
+  rd::discourse::load_into_application(t1_id, s1, state);
+  rd::discourse::load_into_application(t1_id, s2, state);
+  rd::discourse::load_into_application(t2_id, s1, state);
+  rd::discourse::load_into_application(t2_id, s2, state);
+  state.data_source_operation_state_registry.ctx.run();
+}

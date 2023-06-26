@@ -7,10 +7,10 @@
 namespace rd {
 
 class data_source_operation_state_registry_t {
-  boost::asio::io_context ctx;
   rd::in_memory_registry<rd::data_source_operation_state_t> registry;
 
 public:
+  boost::asio::io_context ctx;
   using key_t = decltype(registry)::key_t;
   using value_t = decltype(registry)::value_t;
 
