@@ -35,7 +35,7 @@ bin/tests/feeback_ingest_test
 Feedback ingest gets data source information from loader files.
 Create a directory name `loader_files`.
 
-- loader_files/tenant.txt
+- `loader_files/tenant.txt`
 
 This file describes the different tenant information.
 File contains multiple lines of structure:
@@ -53,7 +53,7 @@ A sample file looks like:
 **NOTE:** tenant_id used in this file is just for loading purposes and have no
 connection with tenant_id used in application.
 
-- loader_files/discourse.txt
+- `loader_files/discourse.txt`
 
 This describes the discourse data source and tenants fetching from that data
 source.
@@ -69,7 +69,7 @@ Discourse 111143 2 1 2
 Discourse 31963 2 1 2
 ```
 
-- loader_files/filepp.txt
+- `loader_files/filepp.txt`
 
 This describes the filepp data source and tenants fetching from that data
 source.
@@ -122,7 +122,7 @@ A sample filepp json file looks like:
 ]
 ```
 
-- loader_files/notifyu.txt
+- `loader_files/notifyu.txt`
 
 This describes the notifyu data source and tenants fetching from that data
 source.
