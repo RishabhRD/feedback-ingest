@@ -170,4 +170,14 @@ Where sample.json looks like:
 ```
 
 
+## High level Design decisions
 
+- Software is written with having batch processing in mind. This decision was
+  made based on nature of data (that is user feedback) as delay is affordable
+  here.
+
+## Low level Design decisions
+
+- Event + Data oriented design is chosen over object oriented system.
+- Third party coroutines and executors library is used as first class citizen.
+- Values and objects are differentiated as much as possible.

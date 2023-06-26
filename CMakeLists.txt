@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
-project(snake CXX)
+project(feedback-ingest CXX)
+set(PROJECT_AUTHORS "Rishabh Dwivedi")
 include(cmake/StandardProjectSettings.cmake)
 include(cmake/StaticAnalyzers.cmake)
 include(cmake/CompilerWarnings.cmake)
