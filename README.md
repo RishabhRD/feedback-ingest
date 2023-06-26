@@ -169,6 +169,13 @@ Where sample.json looks like:
 }
 ```
 
+## Code structure
+
+- `src/`: contains the `main.cpp` file to run. I am not a very big fan of decoupling
+header and source. (Waiting for C++20 modules toolings to be mature enough to get rid of this for all).
+- `include/`: contains all the headers and their implementations.
+- `tests/`: contains the unit tests for all calculations involved in application.
+
 
 ## High level Design decisions
 
