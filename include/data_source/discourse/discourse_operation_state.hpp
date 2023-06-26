@@ -4,6 +4,7 @@
 #include "coro.hpp"
 #include "data_source/data_source_info_registry.hpp"
 #include "data_source/discourse/discourse_info.hpp"
+#include "data_source/types.hpp"
 #include "http_ops.hpp"
 #include "new_schema_handler.hpp"
 #include "schema.hpp"
@@ -26,8 +27,6 @@ fetch_posts_between(int source_id, int tenant_id, int topic_id,
 }
 
 template <typename Timer> struct discourse_operation_state_t {
-  using tenant_id_t = rd::tenant_registry_t::key_t;
-  using source_id_t = rd::data_source_info_registry_t::key_t;
 
   discourse_operation_state_t(source_id_t source_id_, tenant_id_t tenant_id_,
                               discourse_info_t discourse_info_,
@@ -53,6 +52,9 @@ template <typename Timer> struct discourse_operation_state_t {
                                   std::to_string(source_id));
     } catch (std::exception &e) {
       std::cout << e.what() << std::endl;
+      std::cout << "discourse source crashed \nsource_id: " << source_id
+                << "\ntenant_id: " << tenant_id << '\n'
+                << e.what() << std::endl;
     }
   }
 

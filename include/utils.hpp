@@ -10,4 +10,8 @@ constexpr auto without_blank_lines =
     ranges::views::filter([](std::string_view str) {
       return !ranges::all_of(str, BOOST_HOF_LIFT(std::isspace));
     });
-}
+
+constexpr auto ignore_arguments = [](auto &&f) {
+  return [&f](auto &&...) { return f(); };
+};
+} // namespace rd
