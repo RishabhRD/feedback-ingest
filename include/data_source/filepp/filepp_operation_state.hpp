@@ -24,7 +24,7 @@ template <typename Timer> struct filepp_operation_state_t {
   filepp_operation_state_t(filepp_operation_state_t const &) = delete;
   filepp_operation_state_t(filepp_operation_state_t &&) = default;
 
-  rd::awaitable<void> start() {
+  auto start() -> rd::awaitable<void> {
     try {
       auto op = [&](auto &&...) { return extract_transform_and_load(); };
       co_await schedule_every(std::chrono::minutes(30), op,
@@ -38,7 +38,7 @@ template <typename Timer> struct filepp_operation_state_t {
   }
 
 private:
-  rd::awaitable<void> extract_transform_and_load() {
+  auto extract_transform_and_load() -> rd::awaitable<void> {
     auto const lines = co_await rd::read_file(filepp_info.file_path);
     auto const schema = rd::filepp::to_schema(source_id, tenant_id, lines);
     co_await rd::on_new_schema_creation(schema);

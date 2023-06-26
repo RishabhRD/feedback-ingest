@@ -2,7 +2,6 @@
 
 #include <boost/hof/lift.hpp>
 #include <cctype>
-#include <functional>
 #include <range/v3/algorithm/all_of.hpp>
 #include <range/v3/view/filter.hpp>
 namespace rd {

@@ -2,6 +2,7 @@
 
 #include "data_source/discourse/discourse_info.hpp"
 #include "data_source/filepp/filepp_info.hpp"
+#include "data_source/notifyu/notifyu_info.hpp"
 #include "data_source_info_header.hpp"
 #include "meta.hpp"
 #include "schema.hpp"
@@ -27,5 +28,6 @@ static_assert(
 
 using data_source_info_t =
     __details::data_source_list_t<discourse::discourse_info_t,
-                                  filepp::filepp_info_t>;
+                                  filepp::filepp_info_t,
+                                  notifyu::notifyu_info_t>;
 } // namespace rd

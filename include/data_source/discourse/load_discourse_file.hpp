@@ -41,7 +41,8 @@ constexpr auto make_loader_entries =
     rd::data_loader_utils::with_lines(__detail::get_loader_entry);
 
 inline auto make_operation_state(int source_id, int tenant_id,
-                                 rd::discourse::discourse_info_t source_info) {
+                                 rd::discourse::discourse_info_t source_info,
+                                 rd::application_state_t &) {
   return rd::discourse::discourse_operation_state_t{
       source_id, tenant_id, source_info, rd::asio_timer::execute_every_t{}};
 }

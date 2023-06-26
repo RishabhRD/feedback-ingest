@@ -82,4 +82,46 @@ inline rd::awaitable<std::string> http_get(std::string const &url) {
     co_return str;
   }
 }
+
+inline auto send_forbidden_response(__detail::tcp::socket &socket)
+    -> rd::awaitable<void> {
+  namespace http = boost::beast::http;
+  http::response<http::string_body> res;
+  res.version(11);
+  res.result(http::status::forbidden);
+  res.set(http::field::server, "Enterpret Rest Server");
+  res.set(http::field::content_type, "text/plain");
+  res.body() = "403 Forbidden\r\n";
+  res.prepare_payload();
+
+  co_await http::async_write(socket, res, boost::asio::use_awaitable);
+}
+
+inline auto send_ok_response(__detail::tcp::socket &socket)
+    -> rd::awaitable<void> {
+  namespace http = boost::beast::http;
+  http::response<http::string_body> res;
+  res.version(11);
+  res.result(http::status::ok);
+  res.set(http::field::server, "Enterpret Rest Server");
+  res.set(http::field::content_type, "text/plain");
+  res.body() = "200 OK\r\n";
+  res.prepare_payload();
+
+  co_await http::async_write(socket, res, boost::asio::use_awaitable);
+}
+
+inline auto send_not_found_response(__detail::tcp::socket &socket)
+    -> rd::awaitable<void> {
+  namespace http = boost::beast::http;
+  http::response<http::string_body> res;
+  res.version(11);
+  res.result(http::status::not_found);
+  res.set(http::field::server, "Enterpret Rest Server");
+  res.set(http::field::content_type, "text/plain");
+  res.body() = "404 not found\r\n";
+  res.prepare_payload();
+
+  co_await http::async_write(socket, res, boost::asio::use_awaitable);
+}
 } // namespace rd

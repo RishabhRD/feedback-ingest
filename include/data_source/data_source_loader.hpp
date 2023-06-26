@@ -20,7 +20,7 @@ load_into_application(std::vector<data_load_entry_t<SourceInfo>> data_to_load,
     for (auto tenant_id : tenants) {
       state.data_source_operation_state_registry.register_value(
           make_operation_state(source_id, tenant_id,
-                               source_info_with_header.source_info));
+                               source_info_with_header.source_info, state));
     }
   }
 }

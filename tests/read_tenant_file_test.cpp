@@ -1,5 +1,5 @@
-#include "application_state.hpp"
 #include "tenant/read_tenant_file.hpp"
+#include "tenant/tenant_registry.hpp"
 #include <doctest/doctest.h>
 
 TEST_CASE("Check if all tenenants are being registered correctly") {
@@ -9,13 +9,13 @@ TEST_CASE("Check if all tenenants are being registered correctly") {
       "2 rishabhdwivedi17@gmail.com Local",
       "",
   };
-  rd::application_state_t state;
-  auto mapping = rd::register_all_tenants(state, file_content);
+  rd::tenant_registry_t tenant_registry;
+  auto mapping = rd::register_all_tenants(tenant_registry, file_content);
 
-  auto value_1 = state.tenant_registry.get(mapping[1]);
+  auto value_1 = tenant_registry.get(mapping[1]);
   REQUIRE_EQ(value_1.owner_email, "enterpret@enterpret.com");
   REQUIRE_EQ(value_1.organisation, "Enterpret");
-  auto value_2 = state.tenant_registry.get(mapping[2]);
+  auto value_2 = tenant_registry.get(mapping[2]);
   REQUIRE_EQ(value_2.owner_email, "rishabhdwivedi17@gmail.com");
   REQUIRE_EQ(value_2.organisation, "Local");
 }
