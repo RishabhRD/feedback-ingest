@@ -95,7 +95,7 @@ A sample filepp json file looks like:
         "User": "Can you help me with adding post to story button"
       },
       {
-        "User": "Now, I can't see it. Its become hard to use."
+        "User": "Now, I can't see it easily. It became really small and hard to use."
       },
       {
         "Support": "You don't need help sir!"
