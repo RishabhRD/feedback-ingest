@@ -15,6 +15,7 @@ using namespace std::chrono;
 struct execute_every_t {
   using clock_t = std::chrono::system_clock;
   using timepoint_t = std::chrono::time_point<clock_t>;
+  using duration_t = clock_t::duration;
 
   auto operator()(rd::is_duration auto duration, auto &callback) const {
     return execute(clock_t::now(), duration, callback, "");

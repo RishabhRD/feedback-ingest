@@ -7,6 +7,7 @@
 #include "data_source/types.hpp"
 #include "http_ops.hpp"
 #include "schema.hpp"
+#include "sink/sink_concepts.hpp"
 #include "tenant/tenant_registry.hpp"
 #include <chrono>
 #include <functional>
@@ -27,7 +28,7 @@ fetch_posts_between(int source_id, int tenant_id, int topic_id,
   co_return raw_posts_to_schema(post_ids_url_res, source_id, tenant_id);
 }
 
-template <typename Timer, typename Sink> struct discourse_operation_state_t {
+template <typename Timer, rd::is_sink Sink> struct discourse_operation_state_t {
 
   discourse_operation_state_t(source_id_t source_id_, tenant_id_t tenant_id_,
                               discourse_info_t discourse_info_,

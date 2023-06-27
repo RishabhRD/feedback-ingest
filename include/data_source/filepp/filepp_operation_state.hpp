@@ -6,6 +6,7 @@
 #include "data_source/operation_state_concept.hpp"
 #include "data_source/types.hpp"
 #include "file_ops.hpp"
+#include "sink/sink_concepts.hpp"
 #include "utils.hpp"
 #include <chrono>
 #include <functional>
@@ -14,7 +15,7 @@
 namespace rd {
 namespace filepp {
 
-template <typename Timer, typename Sink> struct filepp_operation_state_t {
+template <typename Timer, rd::is_sink Sink> struct filepp_operation_state_t {
   filepp_operation_state_t(source_id_t source_id_, tenant_id_t tenant_id_,
                            filepp_info_t filepp_info_, Timer schedule_every_,
                            std::reference_wrapper<Sink> sink_)

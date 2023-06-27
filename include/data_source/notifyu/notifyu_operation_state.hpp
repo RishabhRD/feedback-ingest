@@ -5,6 +5,8 @@
 #include "data_source/notifyu/notifyu_info.hpp"
 #include "data_source/types.hpp"
 #include "http_ops.hpp"
+#include "rest_server_concepts.hpp"
+#include "sink/sink_concepts.hpp"
 #include "utils.hpp"
 #include <boost/asio/co_spawn.hpp>
 #include <boost/beast/http.hpp>
@@ -14,7 +16,8 @@
 
 namespace rd {
 namespace notifyu {
-template <typename RestServer, typename Sink> struct notifyu_operation_state_t {
+template <rd::is_rest_server RestServer, rd::is_sink Sink>
+struct notifyu_operation_state_t {
   notifyu_operation_state_t(source_id_t source_id_, tenant_id_t tenant_id_,
                             notifyu_info_t notifyu_info_,
                             std::reference_wrapper<RestServer> server_,

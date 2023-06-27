@@ -1,5 +1,6 @@
 #include "schema.hpp"
 #include "sink/json_sink.hpp"
+#include "sink/sink_concepts.hpp"
 #include <doctest/doctest.h>
 
 TEST_CASE("creates correct file name") {
@@ -9,3 +10,5 @@ TEST_CASE("creates correct file name") {
                  std::to_string(time_point.time_since_epoch().count()) +
                  ".json");
 }
+
+TEST_CASE("sink concept check") { static_assert(rd::is_sink<rd::json_sink_t>); }
