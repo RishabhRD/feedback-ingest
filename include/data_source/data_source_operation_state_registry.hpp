@@ -1,13 +1,13 @@
 #pragma once
 
-#include "data_source/data_source_operation_state.hpp"
+#include "data_source/any_operation_state.hpp"
 #include "registry/in_memory_registry.hpp"
 #include <boost/asio.hpp>
 
 namespace rd {
 
 class data_source_operation_state_registry_t {
-  rd::in_memory_registry<rd::data_source_operation_state_t> registry;
+  rd::in_memory_registry<rd::any_operation_state> registry;
   std::reference_wrapper<boost::asio::io_context> ctx;
 
 public:
@@ -23,7 +23,7 @@ public:
   // Precondition: start task should not throw any exception
   auto register_value(value_t value) -> key_t {
     auto res = registry.register_value(std::move(value));
-    boost::asio::co_spawn(ctx.get(), rd::start(registry.get(res)),
+    boost::asio::co_spawn(ctx.get(), registry.get(res).start(),
                           boost::asio::detached);
     return res;
   }

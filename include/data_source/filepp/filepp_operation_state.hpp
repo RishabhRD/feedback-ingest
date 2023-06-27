@@ -3,9 +3,9 @@
 #include "coro.hpp"
 #include "data_source/filepp/algorithms.hpp"
 #include "data_source/filepp/filepp_info.hpp"
+#include "data_source/operation_state_concept.hpp"
 #include "data_source/types.hpp"
 #include "file_ops.hpp"
-#include "new_schema_handler.hpp"
 #include "utils.hpp"
 #include <chrono>
 #include <functional>
@@ -14,12 +14,13 @@
 namespace rd {
 namespace filepp {
 
-template <typename Timer> struct filepp_operation_state_t {
+template <typename Timer, typename Sink> struct filepp_operation_state_t {
   filepp_operation_state_t(source_id_t source_id_, tenant_id_t tenant_id_,
-                           filepp_info_t filepp_info_, Timer schedule_every_)
+                           filepp_info_t filepp_info_, Timer schedule_every_,
+                           std::reference_wrapper<Sink> sink_)
       : source_id(std::move(source_id_)), tenant_id(std::move(tenant_id_)),
         filepp_info(std::move(filepp_info_)),
-        schedule_every(std::move(schedule_every_)) {}
+        schedule_every(std::move(schedule_every_)), sink(std::move(sink_)) {}
 
   filepp_operation_state_t(filepp_operation_state_t const &) = delete;
   filepp_operation_state_t(filepp_operation_state_t &&) = default;
@@ -31,8 +32,10 @@ template <typename Timer> struct filepp_operation_state_t {
                               std::to_string(tenant_id) + "_" +
                                   std::to_string(source_id));
     } catch (std::exception &e) {
-      spdlog::error("filepp source crashed \nsource_id: {}\ntenant_id: {}\n{}",
-                    source_id, tenant_id, e.what());
+      spdlog::error("filepp source crashed");
+      spdlog::error("source_id: {}", source_id);
+      spdlog::error("tenant_id: {}", tenant_id);
+      spdlog::error("exception info: {}", e.what());
     }
   }
 
@@ -42,13 +45,14 @@ private:
                  source_id, tenant_id);
     auto const lines = co_await rd::read_file(filepp_info.file_path);
     auto const schema = rd::filepp::to_schema(source_id, tenant_id, lines);
-    co_await rd::on_new_schema_creation(schema);
+    co_await sink.get().load(schema);
   }
 
   rd::source_id_t source_id;
   rd::tenant_id_t tenant_id;
   rd::filepp::filepp_info_t filepp_info;
   Timer schedule_every;
+  std::reference_wrapper<Sink> sink;
 };
 } // namespace filepp
 } // namespace rd

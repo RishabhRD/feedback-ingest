@@ -5,8 +5,8 @@
 #include "data_source/notifyu/notifyu_info.hpp"
 #include "data_source/types.hpp"
 #include "http_ops.hpp"
-#include "new_schema_handler.hpp"
 #include "utils.hpp"
+#include <boost/asio/co_spawn.hpp>
 #include <boost/beast/http.hpp>
 #include <functional>
 #include <iostream>
@@ -14,12 +14,14 @@
 
 namespace rd {
 namespace notifyu {
-template <typename RestServer> struct notifyu_operation_state_t {
+template <typename RestServer, typename Sink> struct notifyu_operation_state_t {
   notifyu_operation_state_t(source_id_t source_id_, tenant_id_t tenant_id_,
                             notifyu_info_t notifyu_info_,
-                            std::reference_wrapper<RestServer> server_)
+                            std::reference_wrapper<RestServer> server_,
+                            std::reference_wrapper<Sink> sink_)
       : source_id(std::move(source_id_)), tenant_id(std::move(tenant_id_)),
-        notifyu_info(std::move(notifyu_info_)), server(std::move(server_)) {}
+        notifyu_info(std::move(notifyu_info_)), server(std::move(server_)),
+        sink(std::move(sink_)) {}
 
   notifyu_operation_state_t(notifyu_operation_state_t const &) = delete;
   notifyu_operation_state_t(notifyu_operation_state_t &&) = default;
@@ -32,8 +34,10 @@ template <typename RestServer> struct notifyu_operation_state_t {
       server.get().register_route(notifyu_info.listening_route, op);
       co_return;
     } catch (std::exception &e) {
-      spdlog::error("notifyu source crashed \nsource_id: {}\ntenant_id: {}\n{}",
-                    source_id, tenant_id, e.what());
+      spdlog::error("notifyu source crashed");
+      spdlog::error("source_id: {}", source_id);
+      spdlog::error("tenant_id: {}", tenant_id);
+      spdlog::error("exception info: {}", e.what());
     }
   }
 
@@ -52,12 +56,13 @@ private:
         co_await rd::send_forbidden_response(socket);
         co_return;
       }
-      co_await on_new_schema_creation(parsed.second);
       co_await send_ok_response(socket);
+      co_await sink.get().load(parsed.second);
     } catch (std::exception &e) {
-      spdlog::error(
-          "notifyu request handler failed \nsource_id: {}\ntenant_id: {}\n{}",
-          source_id, tenant_id, e.what());
+      spdlog::error("notifyu request handler failed");
+      spdlog::error("source_id: {}", source_id);
+      spdlog::error("tenant_id: {}", tenant_id);
+      spdlog::error("exception info: {}", e.what());
       co_return;
     }
   }
@@ -66,6 +71,7 @@ private:
   rd::tenant_id_t tenant_id;
   rd::notifyu::notifyu_info_t notifyu_info;
   std::reference_wrapper<RestServer> server;
+  std::reference_wrapper<Sink> sink;
 };
 } // namespace notifyu
 } // namespace rd

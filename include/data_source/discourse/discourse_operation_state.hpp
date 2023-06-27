@@ -6,10 +6,10 @@
 #include "data_source/discourse/discourse_info.hpp"
 #include "data_source/types.hpp"
 #include "http_ops.hpp"
-#include "new_schema_handler.hpp"
 #include "schema.hpp"
 #include "tenant/tenant_registry.hpp"
-#include <iostream>
+#include <chrono>
+#include <functional>
 #include <spdlog/spdlog.h>
 
 namespace rd {
@@ -27,51 +27,51 @@ fetch_posts_between(int source_id, int tenant_id, int topic_id,
   co_return raw_posts_to_schema(post_ids_url_res, source_id, tenant_id);
 }
 
-template <typename Timer> struct discourse_operation_state_t {
+template <typename Timer, typename Sink> struct discourse_operation_state_t {
 
   discourse_operation_state_t(source_id_t source_id_, tenant_id_t tenant_id_,
                               discourse_info_t discourse_info_,
-                              Timer schedule_every_)
+                              Timer schedule_every_,
+                              std::reference_wrapper<Sink> sink_)
       : source_id(source_id_), tenant_id(tenant_id_),
         discourse_info(discourse_info_),
-        schedule_every(std::move(schedule_every_)) {}
+        schedule_every(std::move(schedule_every_)), sink(std::move(sink_)) {}
 
   discourse_operation_state_t(discourse_operation_state_t const &) = delete;
   discourse_operation_state_t(discourse_operation_state_t &&) = default;
 
   rd::awaitable<void> start() {
     try {
-      auto extract_transform_load = [&](auto prev_time) -> rd::awaitable<void> {
-        spdlog::info(
-            "Discourse: Processing data for source_id: {}, tenant_id: {}",
-            source_id, tenant_id);
-        auto schemas = co_await fetch_posts_between(
-            source_id, tenant_id, discourse_info.topic_id, prev_time,
-            std::chrono::system_clock::now());
-        co_await rd::on_new_schema_creation(schemas);
+      auto op = [&](auto prev_time) {
+        return extract_transform_and_load(std::move(prev_time));
       };
-      co_await schedule_every(std::chrono::sys_days{2023y / 1 / 1},
-                              std::chrono::days(1), extract_transform_load,
-                              std::to_string(tenant_id) + "_" +
-                                  std::to_string(source_id));
+      co_await schedule_every(
+          std::chrono::sys_days{2023y / 1 / 1}, std::chrono::days(1), op,
+          std::to_string(tenant_id) + "_" + std::to_string(source_id));
     } catch (std::exception &e) {
-      spdlog::error(
-          "discourse source crashed \nsource_id: {}\ntenant_id: {}\n{}",
-          source_id, tenant_id, e.what());
+      spdlog::error("Discourse source crashed");
+      spdlog::error("source_id: {}", source_id);
+      spdlog::error("tenant_id: {}", tenant_id);
+      spdlog::error("exception info: {}", e.what());
     }
   }
 
 private:
+  auto extract_transform_and_load(auto prev_time) -> rd::awaitable<void> {
+    spdlog::info("Discourse: Processing data for source_id: {}, tenant_id: {}",
+                 source_id, tenant_id);
+    auto schemas = co_await fetch_posts_between(
+        source_id, tenant_id, discourse_info.topic_id, prev_time,
+        std::chrono::system_clock::now());
+    co_await sink.get().load(schemas);
+  }
+
   source_id_t source_id;
   tenant_id_t tenant_id;
   discourse_info_t discourse_info;
   Timer schedule_every;
+  std::reference_wrapper<Sink> sink;
 };
-template <typename Timer>
-discourse_operation_state_t(
-    typename discourse_operation_state_t<Timer>::source_id_t,
-    typename discourse_operation_state_t<Timer>::tenant_id_t, discourse_info_t,
-    Timer) -> discourse_operation_state_t<Timer>;
 
 } // namespace discourse
 } // namespace rd

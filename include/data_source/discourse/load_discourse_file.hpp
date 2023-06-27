@@ -5,7 +5,9 @@
 #include "data_source/data_source_info_header.hpp"
 #include "data_source/data_source_loader.hpp"
 #include "data_source/discourse/discourse_info.hpp"
+#include "data_source/discourse/discourse_operation_state.hpp"
 #include "file_ops.hpp"
+#include "timer/asio_timer.hpp"
 #include "utils.hpp"
 #include <string>
 #include <unordered_map>
@@ -42,9 +44,10 @@ constexpr auto make_loader_entries =
 
 inline auto make_operation_state(int source_id, int tenant_id,
                                  rd::discourse::discourse_info_t source_info,
-                                 rd::application_state_t &) {
+                                 rd::application_state_t &state) {
   return rd::discourse::discourse_operation_state_t{
-      source_id, tenant_id, source_info, rd::asio_timer::execute_every_t{}};
+      source_id, tenant_id, std::move(source_info),
+      rd::asio_timer::execute_every_t{}, std::ref(state.sink)};
 }
 
 inline auto load_from_file(std::string file_path,

@@ -34,7 +34,8 @@ inline auto make_operation_state(int source_id, int tenant_id,
                                  rd::notifyu::notifyu_info_t source_info,
                                  rd::application_state_t &state) {
   return rd::notifyu::notifyu_operation_state_t{
-      source_id, tenant_id, source_info, std::ref(state.server)};
+      source_id, tenant_id, source_info, std::ref(state.server),
+      std::ref(state.sink)};
 }
 
 inline auto load_from_file(std::string file_path,

@@ -3,6 +3,8 @@
 #include "application_state.hpp"
 #include "data_source/data_source_info_header.hpp"
 #include "utils.hpp"
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/transform.hpp>
 #include <vector>
 namespace rd {
 template <typename SourceInfo> struct data_load_entry_t {

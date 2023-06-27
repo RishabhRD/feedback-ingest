@@ -5,6 +5,8 @@
 #include "data_source/filepp/filepp_info.hpp"
 #include "data_source/filepp/filepp_operation_state.hpp"
 #include "data_source/types.hpp"
+#include "timer/asio_timer.hpp"
+#include <functional>
 
 namespace rd {
 namespace filepp {
@@ -37,9 +39,10 @@ constexpr auto make_loader_entries =
 
 inline auto make_operation_state(int source_id, int tenant_id,
                                  rd::filepp::filepp_info_t source_info,
-                                 rd::application_state_t &) {
-  return rd::filepp::filepp_operation_state_t{
-      source_id, tenant_id, source_info, rd::asio_timer::execute_every_t{}};
+                                 rd::application_state_t &state) {
+  return rd::filepp::filepp_operation_state_t{source_id, tenant_id, source_info,
+                                              rd::asio_timer::execute_every_t{},
+                                              std::ref(state.sink)};
 }
 
 inline auto load_from_file(std::string file_path,

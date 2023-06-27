@@ -1,5 +1,5 @@
 #include "schema.hpp"
-#include "schema_dump/json_schema_dump.hpp"
+#include "sink/json_sink.hpp"
 #include <doctest/doctest.h>
 
 TEST_CASE("creates correct file name") {
