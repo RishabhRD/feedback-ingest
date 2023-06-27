@@ -183,9 +183,38 @@ C++20 modules toolings to be mature enough to get rid of this once for all.
 - Software is written with having batch processing in mind. This decision was
   made based on nature of data (that is user feedback) as delay is affordable
   here.
+- Timer based mechanism is used for implementing pull based ingestion.
+- HTTP API is exposed for implementing push based ingestion.
 
 ## Low level Design decisions
 
 - Event + Data oriented design is chosen over object oriented system.
 - Third party coroutines and executors library is used as first class citizen.
 - Values and objects are differentiated as much as possible.
+
+## High Level Architecture Diagram
+
+![feedback_ingest architecture](./ingestion.png)
+
+1. **Extraction Part:** There are multiple data sources from where we need to
+   fetch the data or data source would push the data to us. We would treat data
+   from those data sources as raw data.
+
+   Note that arrow from data source to raw data represents data source is
+   push data to us and arrow from raw data to data source represent that we
+   are fetching data from data source.
+
+   Pushing data to our system is implemented with use of exposing HTTP routes.
+   And we are fetching data from data sources in a timely fashion. Codebase is
+   extensible enough to adopt other ways easily.
+
+2. **Transformation Part:** Different raw data can be of different format. There
+   should be a common representation for unified processing of the ingested
+   data. So, transformation layer runs transformation algorithm for this conversion
+   over data.
+
+3. **Storage Part:** At the last the new schema created should be dumped to
+   a sink for further use by any other application.
+
+Here schema can be seen as pair of sum type of all possible types of feedback
+and their unified metadata representation.
