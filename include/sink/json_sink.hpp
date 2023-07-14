@@ -23,7 +23,7 @@ inline auto create_dir_name(std::string base_path, int tenant_id) {
 }
 
 struct json_sink_t {
-  auto load(std::vector<rd::schema_t> const &schemas) -> rd::awaitable<void> {
+  auto write(std::vector<rd::schema_t> const &schemas) -> rd::awaitable<void> {
     if (schemas.size() == 0)
       co_return;
     int const source_id = schemas.front().source_id;

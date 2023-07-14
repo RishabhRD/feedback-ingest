@@ -60,7 +60,7 @@ private:
         co_return;
       }
       co_await send_ok_response(socket);
-      co_await sink.get().load(parsed.second);
+      co_await sink.get().write(parsed.second);
     } catch (std::exception &e) {
       spdlog::error("notifyu request handler failed");
       spdlog::error("source_id: {}", source_id);

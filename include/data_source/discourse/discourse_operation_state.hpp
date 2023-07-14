@@ -64,7 +64,7 @@ private:
     auto schemas = co_await fetch_posts_between(
         source_id, tenant_id, discourse_info.topic_id, prev_time,
         std::chrono::system_clock::now());
-    co_await sink.get().load(schemas);
+    co_await sink.get().write(schemas);
   }
 
   source_id_t source_id;

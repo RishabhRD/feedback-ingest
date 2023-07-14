@@ -46,7 +46,7 @@ private:
                  source_id, tenant_id);
     auto const lines = co_await rd::read_file(filepp_info.file_path);
     auto const schema = rd::filepp::to_schema(source_id, tenant_id, lines);
-    co_await sink.get().load(schema);
+    co_await sink.get().write(schema);
   }
 
   rd::source_id_t source_id;
